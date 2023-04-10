@@ -1,9 +1,9 @@
 package com.example.restpost.controller;
 
-import com.example.restpost.dtos.AddressDto;
-import com.example.restpost.dtos.CountryCommand;
+import com.example.restpost.dtos.*;
 import com.example.restpost.service.AddressService;
 import lombok.AllArgsConstructor;
+
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,6 +22,18 @@ public class AddressController {
     @PostMapping
     public AddressDto registerCountry(@RequestBody CountryCommand command) {
         return addressService.registerCountry(command);
+    }
+
+    @PutMapping("/{id}/non-ie")
+    public AddressDto updateAddressWithPostalCode(@PathVariable("id") Long id, @RequestBody UpdatePostalCommand updateCommand) {
+
+        return addressService.updateAddress(id, updateCommand);
+    }
+
+    @PutMapping("/{id}/ie")
+    public AddressDto updateIrishAddress(@PathVariable("id") Long id, @RequestBody IrishUpdateCommand updateCommand) {
+
+        return addressService.updateAddress(id, updateCommand);
     }
 
 
