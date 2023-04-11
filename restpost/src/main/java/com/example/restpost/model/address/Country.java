@@ -10,7 +10,7 @@ import java.util.List;
 public enum Country {
   HU("HUNGARY", 4),PL("POLAND",5),IE("IRELAND");
 
-  String name;
+  final String name;
 
   Integer postalCodeFormat;
 
@@ -25,8 +25,8 @@ public enum Country {
     @Data
     public static class CountryData {
         private List<Country> countries = List.of(Country.values());
-        private List<String> countryNames=  Arrays.stream(Country.values()).map(country -> country.getName()).toList();
-        private List<Integer> postalCodeFormats = Arrays.stream(Country.values()).map(country -> country.getPostalCodeFormat()).toList();
+        private List<String> countryNames=  Arrays.stream(Country.values()).map(Country::getName).toList();
+        private List<Integer> postalCodeFormats = Arrays.stream(Country.values()).map(Country::getPostalCodeFormat).toList();
     }
 
 
