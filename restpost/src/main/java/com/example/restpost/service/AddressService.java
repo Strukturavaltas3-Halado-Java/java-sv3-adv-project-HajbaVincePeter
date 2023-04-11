@@ -1,19 +1,24 @@
 package com.example.restpost.service;
 
-import com.example.restpost.dtos.*;
+import com.example.restpost.dtos.address_commands.CountryCommand;
+import com.example.restpost.dtos.address_commands.UpdateIrishCommand;
+import com.example.restpost.dtos.address_commands.UpdateCommand;
+import com.example.restpost.dtos.address_commands.UpdatePostalCommand;
+import com.example.restpost.dtos.address_dtos.AddressDto;
+import com.example.restpost.exception.CountryMismatchException;
 import com.example.restpost.exception.NoAddressWithIdException;
 import com.example.restpost.mapper.AddressMapper;
 import com.example.restpost.model.address.Address;
+import com.example.restpost.model.address.AddressIrish;
 import com.example.restpost.model.address.AddressWithPostalCode;
 import com.example.restpost.model.address.Country;
-import com.example.restpost.model.address.IrishAddress;
 import com.example.restpost.repository.AddressRepository;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -28,18 +33,32 @@ public class AddressService {
     public List<AddressDto> getAddressList() {
 
         return addressRepository.findAll().stream().map(address ->
-        { if(address.getCountry()==Country.IE){
-            return addressMapper.toDto((IrishAddress) addressRepository.findIrishAddressById(address.getId()));
-        }  else {
-            return addressMapper.toDto( (AddressWithPostalCode) addressRepository.findAddressWithPostalCodeById(address.getId()));}})
+                {
+                    if (address instanceof AddressIrish) {
+                        return addressMapper.toDto((AddressIrish) address);
+                    } else {
+                        return addressMapper.toDto((AddressWithPostalCode) address);
+                    }
+                })
                 .collect(Collectors.toList());
+    }
+
+    public AddressDto getAddressById(long id) {
+
+        Address address = addressRepository.findById(id).orElseThrow(() -> new NoAddressWithIdException(id));
+
+        if (address instanceof AddressIrish) {
+            return addressMapper.toDto((AddressIrish) address);
+        } else {
+            return addressMapper.toDto((AddressWithPostalCode) address);
+        }
     }
 
     @Transactional
     public AddressDto registerCountry(CountryCommand command) {
 
         if (command.getCountry() == Country.IE) {
-            IrishAddress address = new IrishAddress();
+            AddressIrish address = new AddressIrish();
             address.setCountry(command.getCountry());
             addressRepository.save(address);
             return addressMapper.toDto(address);
@@ -53,25 +72,54 @@ public class AddressService {
     }
 
     @Transactional
-    public AddressDto updateAddress(Long id, UpdateCommand updateCommand) {
+    public AddressDto updateAddress(@Valid long id, @Valid UpdateCommand updateCommand) {
 
-        Optional<Address> address = addressRepository.findById(id);
-        
-        if( address.isPresent()) {
-            address.get().setName(updateCommand.getName());
-            address.get().setStreetAddress(updateCommand.getStreetAddress());
-            if (address.get() instanceof AddressWithPostalCode) {
-                ((AddressWithPostalCode) address.get()).setPostalCode(((UpdatePostalCommand) updateCommand).getPostalCode());
+        Address address = addressRepository.findById(id).orElseThrow(() -> new NoAddressWithIdException(id));
 
-                return addressMapper.toDto((AddressWithPostalCode) address.get());
+        if (address instanceof AddressWithPostalCode) {
+            if (updateCommand instanceof UpdatePostalCommand) {
+                updatePostal((UpdatePostalCommand) updateCommand, address);
+                return addressMapper.toDto((AddressWithPostalCode) address);
             } else {
-                ((IrishAddress) address.get()).setCounty(((IrishUpdateCommand) updateCommand).getCounty());
-
-                return addressMapper.toDto((IrishAddress) address.get());
+                throw new CountryMismatchException(id);
+            }
+        } else {
+            if (address instanceof AddressIrish) {
+                updateIrish((UpdateIrishCommand) updateCommand, address);
+                return addressMapper.toDto((AddressIrish) address);
+            } else {
+                throw new CountryMismatchException(id);
             }
         }
-        throw new NoAddressWithIdException(id);
+    }
+
+    @Transactional
+    public AddressDto deleteAddress(long id) {
+
+        Address address = addressRepository.findById(id).orElseThrow(() -> new NoAddressWithIdException(id));
+        addressRepository.delete(address);
+        if (address instanceof AddressIrish) {
+            return addressMapper.toDto((AddressIrish) address);
+        } else {
+            return addressMapper.toDto((AddressWithPostalCode) address);
+        }
     }
 
 
+    private void updatePostal(UpdatePostalCommand updateCommand, Address address) {
+        address.setCountry(updateCommand.getCountry());
+        address.setName(updateCommand.getName());
+        address.setCity(updateCommand.getCity());
+        address.setStreetAddress(updateCommand.getStreetAddress());
+
+        ((AddressWithPostalCode) address).setPostalCode(updateCommand.getPostalCode());
+    }
+
+    private void updateIrish(UpdateIrishCommand updateCommand, Address address) {
+        address.setName(updateCommand.getName());
+        address.setName(updateCommand.getName());
+        address.setStreetAddress(updateCommand.getStreetAddress());
+
+        ((AddressIrish) address).setCounty(updateCommand.getCounty());
+    }
 }
