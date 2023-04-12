@@ -84,7 +84,7 @@ public class AddressService {
                 throw new CountryMismatchException(id);
             }
         } else {
-            if (address instanceof AddressIrish) {
+            if (updateCommand instanceof UpdateIrishCommand) {
                 updateIrish((UpdateIrishCommand) updateCommand, address);
                 return addressMapper.toDto((AddressIrish) address);
             } else {
@@ -117,7 +117,7 @@ public class AddressService {
 
     private void updateIrish(UpdateIrishCommand updateCommand, Address address) {
         address.setName(updateCommand.getName());
-        address.setName(updateCommand.getName());
+        address.setCity(updateCommand.getCity());
         address.setStreetAddress(updateCommand.getStreetAddress());
 
         ((AddressIrish) address).setCounty(updateCommand.getCounty());

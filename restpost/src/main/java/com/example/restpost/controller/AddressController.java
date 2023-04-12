@@ -62,7 +62,7 @@ public class AddressController {
     }
 
     @PutMapping("/{id}/ie")@ResponseStatus(HttpStatus.ACCEPTED)
-    public AddressDto updateIrishAddress(@PathVariable("id") Long id, @RequestBody UpdateIrishCommand updateCommand) {
+    public AddressDto updateIrishAddress(@PathVariable("id") Long id, @Valid @RequestBody UpdateIrishCommand updateCommand) {
 
         return addressService.updateAddress(id, updateCommand);
     }

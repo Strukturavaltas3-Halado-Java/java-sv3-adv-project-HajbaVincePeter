@@ -16,7 +16,7 @@ public class GlobalExceptionHandler {
     public ProblemDetail handleMethodArgumentNotValid(MethodArgumentNotValidException e){
 
         ProblemDetail detail = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_ACCEPTABLE,e.getMessage());
-        detail.setType(URI.create("addresses/wrong-data"));
+        detail.setType(URI.create("wrong-data"));
         return detail;
     }
 
@@ -37,6 +37,8 @@ public class GlobalExceptionHandler {
     }
 
 
+
+
     @ExceptionHandler (HttpMessageNotReadableException.class)
     public ProblemDetail handleHttpMessageNotReadable(HttpMessageNotReadableException e) {
         ProblemDetail detail = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_ACCEPTABLE,e.getMessage());
@@ -45,6 +47,20 @@ public class GlobalExceptionHandler {
 
     }
 
+
+   @ExceptionHandler(NoPackageWithIdException.class)
+    public ProblemDetail handleNoPackageWithIdException(NoPackageWithIdException e) {
+        ProblemDetail detail = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND,e.getMessage());
+        detail.setType(URI.create("packages/not-found"));
+        return detail;
+   }
+
+    @ExceptionHandler(NoShipmentWithIdExtension.class)
+    public ProblemDetail handleNoShipmentWithIdExtension(NoShipmentWithIdExtension e) {
+        ProblemDetail detail = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND,e.getMessage());
+        detail.setType(URI.create("shipments/not-found"));
+        return detail;
+    }
 
 
 }

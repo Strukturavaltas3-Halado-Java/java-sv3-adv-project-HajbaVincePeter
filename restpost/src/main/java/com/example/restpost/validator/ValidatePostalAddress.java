@@ -9,7 +9,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.TYPE,ElementType.FIELD,ElementType.ANNOTATION_TYPE})
+@Target(ElementType.TYPE)
 @Constraint(validatedBy = AddressPostalValidator.class)
 public @interface ValidatePostalAddress {
     String message() default "wrong postal code format for the given country";

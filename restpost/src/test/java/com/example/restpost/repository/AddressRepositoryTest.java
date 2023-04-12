@@ -37,7 +37,7 @@ public class AddressRepositoryTest {
         address1.setName("XY");
         address1.setCountry(Country.HU);
         address1.setStreetAddress("utca");
-        ((AddressWithPostalCode) address1).setPostalCode(1126);
+        ((AddressWithPostalCode) address1).setPostalCode("1126");
 
         addressRepository.save(address1);
 
@@ -50,15 +50,16 @@ public class AddressRepositoryTest {
         addressRepository.save(address2);
 
         List<Address> addresses = addressRepository.findAll();
+        System.out.println(addresses);
         org.assertj.core.api.Assertions.assertThat(addresses)
                 .hasSize(3);
 
 
 
-        assertEquals(1126,((AddressWithPostalCode) addresses.get(1)).getPostalCode());
+        assertEquals("1126",((AddressWithPostalCode) addresses.get(2)).getPostalCode());
 
-        assertTrue(addresses.get(1) instanceof AddressWithPostalCode);
-        assertTrue(addresses.get(2) instanceof AddressIrish);
+        assertTrue(addresses.get(2) instanceof AddressWithPostalCode);
+        assertTrue(addresses.get(1) instanceof AddressIrish);
 
         System.out.println(address2.getClass().getSimpleName());
 

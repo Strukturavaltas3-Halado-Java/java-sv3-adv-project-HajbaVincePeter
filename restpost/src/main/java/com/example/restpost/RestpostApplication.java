@@ -1,8 +1,7 @@
 package com.example.restpost;
 
-import com.example.restpost.mapper.AddressMapper;
+import com.example.restpost.mapper.*;
 //import com.example.restpost.mapper.AddressMapperImpl;
-import com.example.restpost.mapper.AddressMapperImpl;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -17,6 +16,12 @@ public class RestpostApplication {
     public AddressMapper addressMapper(){
         return new AddressMapperImpl();
     }
+
+    @Bean
+    public PackageMapper packageMapper() {return  new PackageMapperImpl();}
+
+    @Bean
+    public  ShipmentMapper shipmentMapper() {return  new ShipmentMapperImpl();}
 
 
 

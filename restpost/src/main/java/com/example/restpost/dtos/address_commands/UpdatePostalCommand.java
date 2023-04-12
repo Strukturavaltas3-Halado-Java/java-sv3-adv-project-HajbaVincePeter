@@ -3,6 +3,7 @@ package com.example.restpost.dtos.address_commands;
 import com.example.restpost.model.address.Country;
 import com.example.restpost.validator.ValidatePostalAddress;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,15 +15,15 @@ import lombok.Setter;
 @AllArgsConstructor
 @ValidatePostalAddress
 public class UpdatePostalCommand implements UpdateCommand {
-    @NotBlank
+    @NotNull
     private Country country;
-    @NotBlank
+    @NotNull
     private String streetAddress;
-    @NotBlank
+    @NotNull
     private String name;
-    @NotBlank
+    @NotNull
     private String city;
-    @NotBlank
+    @NotNull
     private String postalCode;
 
 }

@@ -5,7 +5,7 @@ import com.example.restpost.dtos.address_commands.UpdatePostalCommand;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
-public class AddressPostalValidator implements ConstraintValidator<ValidatePostalAddress, UpdateCommand> {
+public class AddressPostalValidator implements ConstraintValidator<ValidatePostalAddress, UpdatePostalCommand> {
 
 
     @Override
@@ -14,12 +14,10 @@ public class AddressPostalValidator implements ConstraintValidator<ValidatePosta
     }
 
     @Override
-    public boolean isValid(UpdateCommand updateCommand, ConstraintValidatorContext constraintValidatorContext) {
+    public boolean isValid(UpdatePostalCommand updateCommand, ConstraintValidatorContext constraintValidatorContext) {
 
-       return  ((UpdatePostalCommand)updateCommand).getCountry().getPostalCodeFormat() ==
-        ((UpdatePostalCommand)updateCommand).getPostalCode().length();
-
-       
+       return  updateCommand.getCountry().getPostalCodeFormat() ==
+        updateCommand.getPostalCode().length();
     }
 
 }
