@@ -30,11 +30,11 @@ public class Shipment {
     private String trackingNumber;
 
     @ManyToOne
-    @JoinColumn(name = "address_from")
+ //   @JoinColumn(name = "address_from")
     private Address from;
 
     @ManyToOne
-    @JoinColumn(name = "adddress_to")
+//    @JoinColumn(name = "address_to")
     private Address to;
 
     @Column(name = "shipping_date")
@@ -47,6 +47,16 @@ public class Shipment {
     public void addPackage(Package aPackage) {
         this.packages.add(aPackage);
         aPackage.setShipment(this);
+    }
+
+    public void removePackage(Package aPackage) {
+
+        if (aPackage.getShipment() == this) {
+           aPackage.setShipment(null);
+           this.getPackages().remove(aPackage);
+        }
+
+
 
     }
 

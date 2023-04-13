@@ -20,9 +20,12 @@ public class AddressRepositoryTest {
     @Autowired
     AddressRepository addressRepository;
 
-    ModelMapper modelMapper = new ModelMapper();
+
+
     @Autowired
     AddressMapper addressMapper;
+
+
     @Test
     void polymorphism(){
 

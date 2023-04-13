@@ -15,7 +15,12 @@ public class AddressPostalValidator implements ConstraintValidator<ValidatePosta
 
     @Override
     public boolean isValid(UpdatePostalCommand updateCommand, ConstraintValidatorContext constraintValidatorContext) {
-
+       if(updateCommand.getCountry() == null) {
+           return false;
+       }
+       if(updateCommand.getPostalCode()==null ) {
+           return false;
+       }
        return  updateCommand.getCountry().getPostalCodeFormat() ==
         updateCommand.getPostalCode().length();
     }

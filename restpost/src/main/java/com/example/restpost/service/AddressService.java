@@ -5,6 +5,7 @@ import com.example.restpost.dtos.address_commands.UpdateIrishCommand;
 import com.example.restpost.dtos.address_commands.UpdateCommand;
 import com.example.restpost.dtos.address_commands.UpdatePostalCommand;
 import com.example.restpost.dtos.address_dtos.AddressDto;
+import com.example.restpost.exception.AddressInShipmentException;
 import com.example.restpost.exception.CountryMismatchException;
 import com.example.restpost.exception.NoAddressWithIdException;
 import com.example.restpost.mapper.AddressMapper;
@@ -13,6 +14,7 @@ import com.example.restpost.model.address.AddressIrish;
 import com.example.restpost.model.address.AddressWithPostalCode;
 import com.example.restpost.model.address.Country;
 import com.example.restpost.repository.AddressRepository;
+import com.example.restpost.repository.ShipmentRepository;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -26,6 +28,8 @@ import java.util.stream.Collectors;
 public class AddressService {
 
     private AddressRepository addressRepository;
+
+    private ShipmentRepository shipmentRepository;
 
     private AddressMapper addressMapper;
 
@@ -98,6 +102,11 @@ public class AddressService {
 
         Address address = addressRepository.findById(id).orElseThrow(() -> new NoAddressWithIdException(id));
         addressRepository.delete(address);
+
+        if( shipmentRepository.findShipmentsWithAddressId(id).size()>0){
+            throw new AddressInShipmentException(shipmentRepository.findShipmentsWithAddressId(id).size(),id);
+        }
+
         if (address instanceof AddressIrish) {
             return addressMapper.toDto((AddressIrish) address);
         } else {

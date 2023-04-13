@@ -62,5 +62,10 @@ public class GlobalExceptionHandler {
         return detail;
     }
 
-
+    @ExceptionHandler(AddressInShipmentException.class)
+    public ProblemDetail handleAddressInShipmentException(AddressInShipmentException e) {
+        ProblemDetail detail = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_ACCEPTABLE,e.getMessage());
+        detail.setType(URI.create("addresses/in-use"));
+        return detail;
+    }
 }

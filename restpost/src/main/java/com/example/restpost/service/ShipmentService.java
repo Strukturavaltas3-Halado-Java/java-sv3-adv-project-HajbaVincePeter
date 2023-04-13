@@ -18,6 +18,7 @@ import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -51,15 +52,6 @@ public class ShipmentService {
 
         shipment.setShippingDate(command.getShippingDate());
 
-//        Optional<Address> fromOptional = addressRepository.findById(command.getFromId());
-//        Optional<Address> toOptional = addressRepository.findById(command.getToId());
-//
-//        if (fromOptional.isPresent()) {
-//            shipment.setFrom(fromOptional.get());
-//        }
-//        if (toOptional.isPresent()) {
-//            shipment.setTo(toOptional.get()); }
-
         if (command.getFromId() != null) {
             Address from = addressRepository.findById(command.getFromId())
                     .orElseThrow(() -> new NoAddressWithIdException(command.getFromId()));
@@ -80,13 +72,46 @@ public class ShipmentService {
                 })
                 .collect(Collectors.toSet()));
 
+        return shipmentMapper.toDto(shipment);
+    }
+
+
+    @Transactional
+    public ShipmentDto addPackageToShipment(long shipmentId, long packageId) {
+
+        Shipment shipment = shipmentRepository.findShipment(shipmentId).orElseThrow(() ->
+                new NoShipmentWithIdExtension(shipmentId));
+
+        Package aPackage = packageRepository.findById(packageId).orElseThrow(() ->
+                new NoPackageWithIdException(packageId));
+
+        shipment.addPackage(aPackage);
 
         return shipmentMapper.toDto(shipment);
+    }
 
+
+    @Transactional
+    public List<ShipmentDto> getShipments() {
+        return shipmentMapper.toDto(shipmentRepository.findShipments());
 
     }
 
-    ;
+    @Transactional
+    public ShipmentDto deleteShipment(long id) {
+
+        Shipment shipment = shipmentRepository.findShipment(id).orElseThrow(() ->
+                new NoShipmentWithIdExtension(id));
+
+        ShipmentDto deleted = shipmentMapper.toDto(shipment);
+
+        shipment.getPackages().stream().forEach(aPackage ->
+                packageRepository.delete(aPackage));
+        shipmentRepository.delete(shipment);
+
+        return deleted;
+
+    }
 
 
 }

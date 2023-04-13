@@ -10,8 +10,10 @@ import com.example.restpost.mapper.PackageMapper;
 import com.example.restpost.model.packages.Package;
 import com.example.restpost.repository.AddressRepository;
 import com.example.restpost.repository.PackageRepository;
+import com.example.restpost.repository.ShipmentRepository;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -26,23 +28,23 @@ public class PackageService {
     private PackageMapper packageMapper;
 
 
-    public List<PackageDto> getPackages(){
-        return  packageRepository.findAll().stream().map(aPackage ->
+    public List<PackageDto> getPackages() {
+        return packageRepository.findAll().stream().map(aPackage ->
                 packageMapper.toDto(aPackage)).collect(Collectors.toList());
     }
 
     public List<PackageDto> getShipmentPackages(long shipmentId) {
 
-     return packageRepository.findShipmentPackages(shipmentId).stream().map(aPackage ->
-             packageMapper.toDto(aPackage)).collect(Collectors.toList());
+        return packageRepository.findShipmentPackages(shipmentId).stream().map(aPackage ->
+                packageMapper.toDto(aPackage)).collect(Collectors.toList());
 
     }
 
 
     public PackageDto getPackageById(long id) {
 
-      return   packageMapper.toDto(packageRepository.findById(id).orElseThrow(()->
-              new NoPackageWithIdException(id)));
+        return packageMapper.toDto(packageRepository.findById(id).orElseThrow(() ->
+                new NoPackageWithIdException(id)));
     }
 
     @Transactional
@@ -56,22 +58,30 @@ public class PackageService {
     @Transactional
     public PackageDto updatePackageWeight(UpdatePackageCommand command) {
 
-        Package aPackage = packageRepository.findById(command.getId()).orElseThrow(()->
-                    new NoPackageWithIdException(command.getId()));
-        if (command.getShipmentId()!= aPackage.getShipment().getId()){
-            throw new PackageNotInShipmentException(command.getId(),command.getShipmentId());
+        Package aPackage = packageRepository.findById(command.getId()).orElseThrow(() ->
+                new NoPackageWithIdException(command.getId()));
+        if (command.getShipmentId() != aPackage.getShipment().getId()) {
+            throw new PackageNotInShipmentException(command.getId(), command.getShipmentId());
         }
         aPackage.setWeight(command.getWeight());
 
         return packageMapper.toDto(aPackage);
     }
 
+    @Transactional
+    public PackageDto deletePackage(long id) {
 
+        Package aPackage = packageRepository.findById(id).orElseThrow(() -> new NoPackageWithIdException(id));
 
+        PackageDto deleted = packageMapper.toDto(aPackage);
 
+        if (aPackage.getShipment() != null) {
+            aPackage.getShipment().removePackage(aPackage);
+        }
+        packageRepository.delete(aPackage);
 
-
-
+        return deleted;
+    }
 
 
 }

@@ -21,7 +21,7 @@ public class UpdateIrishCommand implements UpdateCommand {
     @NotNull
     private String name;
     @NotNull
-    private String City;
+    private String city;
     @NotNull
     private County county;
 }
