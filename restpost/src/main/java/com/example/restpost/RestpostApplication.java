@@ -1,6 +1,6 @@
 package com.example.restpost;
 
-import com.example.restpost.dtos.Analizer;
+import com.example.restpost.dtos.Analyzer;
 import com.example.restpost.mapper.*;
 //import com.example.restpost.mapper.AddressMapperImpl;
 import org.springframework.boot.SpringApplication;
@@ -14,7 +14,7 @@ public class RestpostApplication {
 
     public static void main(String[] args) {
 
-        SpringApplication.run(RestpostApplication.class, args);
+              SpringApplication.run(RestpostApplication.class, args);
     }
     @Bean
     public AddressMapper addressMapper(){
@@ -29,9 +29,6 @@ public class RestpostApplication {
 
 
     @Bean
-    public Analizer helper() { return  new Analizer();}
-
-
-
+    public Analyzer helper() { return  new Analyzer();}
 
 }

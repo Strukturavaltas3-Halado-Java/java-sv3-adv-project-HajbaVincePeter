@@ -5,6 +5,7 @@ import com.example.restpost.model.packages.Package;
 import lombok.Data;
 
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -19,7 +20,7 @@ public class CreateShipmentCommand {
 
     private LocalDate shippingDate;
 
-    private Set<Long> packagesIdList;
+    private Set<Long> packagesIdList = new HashSet<>();
 
 
 }

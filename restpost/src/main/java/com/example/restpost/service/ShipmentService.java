@@ -1,6 +1,6 @@
 package com.example.restpost.service;
 
-import com.example.restpost.dtos.Analizer;
+import com.example.restpost.dtos.Analyzer;
 import com.example.restpost.dtos.shipment_commands.UpdateShipmentCommand;
 import com.example.restpost.dtos.shipment_dtos.ShipmentDto;
 import com.example.restpost.exception.*;
@@ -33,7 +33,7 @@ public class ShipmentService {
 
     private ShipmentMapper shipmentMapper;
 
-    private Analizer analizer;
+    private Analyzer analyzer;
 
 
     @Transactional
@@ -89,7 +89,7 @@ public class ShipmentService {
           shipment.setTrackingNumber(String.valueOf(UUID.randomUUID()));
 
           ShipmentDto dto = shipmentMapper.toDto(shipment);
-         if(analizer.containsNull(dto)){
+         if(analyzer.containsNull(dto)){
              shipment.setTrackingNumber(null);
              throw  new ShipmentNotCompleteError(id);
          };
@@ -119,6 +119,14 @@ public class ShipmentService {
     }
 
     @Transactional
+    public ShipmentDto trackShipment(String trackingNumber){
+         return  shipmentMapper.toDto(shipmentRepository.findByTrackingNumber(trackingNumber)
+                 .orElseThrow(()-> new NoShipmentWithTrackingNumber(trackingNumber)));
+
+    }
+
+
+    @Transactional
     public ShipmentDto deleteShipment(long id) {
 
         Shipment shipment = shipmentRepository.findShipment(id).orElseThrow(() ->
@@ -133,6 +141,8 @@ public class ShipmentService {
         return deleted;
 
     }
+
+
 
 
 }

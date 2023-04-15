@@ -5,7 +5,7 @@ import lombok.val;
 import java.lang.reflect.Field;
 import java.util.Collection;
 
-public class Analizer {
+public class Analyzer {
 
 
     public boolean containsNull(Object obj) throws IllegalAccessException {

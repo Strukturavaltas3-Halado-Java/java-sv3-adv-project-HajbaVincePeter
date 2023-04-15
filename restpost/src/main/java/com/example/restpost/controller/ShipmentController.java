@@ -35,6 +35,7 @@ public class ShipmentController {
     }
 
     @PutMapping("/{shipmentId}/package/{packageId}")
+    @Tag(name = "ADD A PACKAGE", description = "Adding a package to a shipment")
     public ShipmentDto addPackageToShipment(@PathVariable long shipmentId, @PathVariable long packageId) {
         return shipmentService.addPackageToShipment(shipmentId, packageId);
     }
@@ -43,6 +44,15 @@ public class ShipmentController {
     @ResponseStatus(HttpStatus.OK)
     public List<ShipmentDto> getShipments() {
         return shipmentService.getShipments();
+    }
+
+
+
+
+    @GetMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public ShipmentDto trackShipment(@PathVariable("id") String trackingNumber) {
+        return shipmentService.trackShipment(trackingNumber);
     }
 
     @DeleteMapping("/{id}")
@@ -56,4 +66,5 @@ public class ShipmentController {
     public ShipmentDto processShipment(@PathVariable long id) throws IllegalAccessException {
         return shipmentService.processShipment(id);
     }
+
 }

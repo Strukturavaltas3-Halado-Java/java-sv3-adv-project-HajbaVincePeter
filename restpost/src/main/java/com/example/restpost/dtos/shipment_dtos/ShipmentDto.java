@@ -13,6 +13,7 @@ import lombok.val;
 import java.lang.reflect.Field;
 import java.time.LocalDate;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -34,7 +35,7 @@ public class ShipmentDto {
     private LocalDate shippingDate;
 
 
-    private Set<PackageDto> packages;
+    private Set<PackageDto> packages = new HashSet<>();
 
 
     public boolean notReady() throws IllegalAccessException {

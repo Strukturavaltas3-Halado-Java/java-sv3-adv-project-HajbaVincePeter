@@ -26,5 +26,6 @@ public interface ShipmentRepository extends JpaRepository<Shipment,Long> {
     Optional<Shipment> findReadyShipment(@Param("id1") Long id);
 
 
+    Optional<Shipment> findByTrackingNumber(String trackingNumber);
 
 }

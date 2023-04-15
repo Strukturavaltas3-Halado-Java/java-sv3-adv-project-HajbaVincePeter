@@ -8,6 +8,7 @@ import lombok.Data;
 import org.hibernate.validator.constraints.UniqueElements;
 
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -28,6 +29,6 @@ public class UpdateShipmentCommand {
     private LocalDate shippingDate;
 
 
-    private Set<Long> packagesIdList;
+    private Set<Long> packagesIdList = new HashSet<>();
 
 }
