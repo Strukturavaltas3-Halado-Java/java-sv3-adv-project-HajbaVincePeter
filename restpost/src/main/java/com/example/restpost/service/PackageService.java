@@ -60,7 +60,8 @@ public class PackageService {
 
         Package aPackage = packageRepository.findById(command.getId()).orElseThrow(() ->
                 new NoPackageWithIdException(command.getId()));
-        if (command.getShipmentId() != aPackage.getShipment().getId()) {
+
+        if (aPackage.getShipment() != null && command.getShipmentId() != aPackage.getShipment().getId()) {
             throw new PackageNotInShipmentException(command.getId(), command.getShipmentId());
         }
         aPackage.setWeight(command.getWeight());

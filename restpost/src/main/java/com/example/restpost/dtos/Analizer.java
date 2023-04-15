@@ -1,49 +1,14 @@
-package com.example.restpost.dtos.shipment_dtos;
+package com.example.restpost.dtos;
 
-import com.example.restpost.dtos.address_dtos.AddressDto;
-import com.example.restpost.dtos.package_dtos.PackageDto;
-import com.example.restpost.model.address.Address;
-import com.example.restpost.model.packages.Package;
-import jakarta.persistence.Column;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import lombok.Data;
 import lombok.val;
 
 import java.lang.reflect.Field;
-import java.time.LocalDate;
 import java.util.Collection;
-import java.util.List;
-import java.util.Set;
 
-@Data
-public class ShipmentDto {
-
-    private Long id;
+public class Analizer {
 
 
-    private String trackingNumber;
-
-
-    private AddressDto from;
-
-
-    private AddressDto to;
-
-
-    private LocalDate shippingDate;
-
-
-    private Set<PackageDto> packages;
-
-
-    public boolean notReady() throws IllegalAccessException {
-
-        return containsNull(this);
-
-    }
-
-    private boolean containsNull(Object obj) throws IllegalAccessException {
+    public boolean containsNull(Object obj) throws IllegalAccessException {
         if (obj == null) {
             return true;
         }
@@ -53,7 +18,7 @@ public class ShipmentDto {
 
         Field[] fields = clazz.getDeclaredFields();
         for (Field field : fields) {
-         field.setAccessible(true);
+            field.setAccessible(true);
             val value = field.get(obj);
             if (value == null) {
                 return true;
@@ -66,9 +31,9 @@ public class ShipmentDto {
                     }
                 }
             } else if (value instanceof Collection<?>) {
-               if(((Collection<?>) value).size() == 0) {
-                   return true;
-               }
+                if(((Collection<?>) value).size() == 0) {
+                    return true;
+                }
 
                 for (Object v : ((Collection<?>) value)) {
                     {
@@ -96,5 +61,7 @@ public class ShipmentDto {
 
         return false;
     }
+
+
 
 }

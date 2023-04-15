@@ -68,4 +68,20 @@ public class GlobalExceptionHandler {
         detail.setType(URI.create("addresses/in-use"));
         return detail;
     }
+
+    @ExceptionHandler(ShipmentAlreadyProcessedError.class)
+    public ProblemDetail handleShipmentAlreadyProcessedError(ShipmentAlreadyProcessedError e) {
+        ProblemDetail detail = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_ACCEPTABLE,e.getMessage());
+        detail.setType(URI.create("shipments/processed"));
+        return detail;
+    }
+    @ExceptionHandler(ShipmentNotCompleteError.class)
+    public ProblemDetail handleShipmentNotCompleteError(ShipmentNotCompleteError e) {
+        ProblemDetail detail = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_ACCEPTABLE,e.getMessage());
+        detail.setType(URI.create("shipments/not-complete"));
+        return detail;
+    }
+
+
+
 }

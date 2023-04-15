@@ -21,5 +21,10 @@ public interface ShipmentRepository extends JpaRepository<Shipment,Long> {
 
     @Query("select distinct s from Shipment s left join fetch s.packages where s.id = :id")
     Optional<Shipment> findShipment(@Param("id") Long id);
-    ;
+
+    @Query("select distinct s from Shipment s left join fetch s.packages where :x = :id1")
+    Optional<Shipment> findReadyShipment(@Param("id1") Long id);
+
+
+
 }

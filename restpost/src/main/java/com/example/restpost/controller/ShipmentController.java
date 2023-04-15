@@ -4,6 +4,7 @@ import com.example.restpost.dtos.shipment_commands.CreateEmptyCommand;
 import com.example.restpost.dtos.shipment_commands.UpdateShipmentCommand;
 import com.example.restpost.dtos.shipment_dtos.ShipmentDto;
 import com.example.restpost.service.ShipmentService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -16,6 +17,7 @@ import java.util.List;
 @AllArgsConstructor
 @RestController
 @RequestMapping("/api/shipments")
+@Tag(name = "Shipment operations", description = "Creating, updating, finding and deleting shipments.")
 public class ShipmentController {
 
     private ShipmentService shipmentService;
@@ -47,5 +49,11 @@ public class ShipmentController {
     @ResponseStatus(HttpStatus.ACCEPTED)
     public ShipmentDto deleteShipment(@PathVariable long id) {
         return shipmentService.deleteShipment(id);
+    }
+
+
+    @PutMapping("/{id}/process")
+    public ShipmentDto processShipment(@PathVariable long id) throws IllegalAccessException {
+        return shipmentService.processShipment(id);
     }
 }

@@ -7,6 +7,7 @@ import com.example.restpost.dtos.address_dtos.AddressDto;
 import com.example.restpost.model.address.Country;
 import com.example.restpost.model.address.County;
 import com.example.restpost.service.AddressService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 
@@ -20,6 +21,7 @@ import java.util.List;
 @AllArgsConstructor
 @RestController
 @RequestMapping("/api/addresses")
+@Tag(name = "Address operations", description = "Saving, modifying, finding and deleting addresses." )
 public class AddressController {
 
 

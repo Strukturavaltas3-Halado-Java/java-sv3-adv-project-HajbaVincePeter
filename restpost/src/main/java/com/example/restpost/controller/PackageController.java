@@ -4,6 +4,7 @@ import com.example.restpost.dtos.package_commands.CreatePackageCommand;
 import com.example.restpost.dtos.package_commands.UpdatePackageCommand;
 import com.example.restpost.dtos.package_dtos.PackageDto;
 import com.example.restpost.service.PackageService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -15,6 +16,7 @@ import java.util.List;
 @AllArgsConstructor
 @RestController
 @RequestMapping("/api/packages")
+@Tag(name = "Package operations", description = "Creating, updating find and deleting packages")
 public class PackageController {
 
 

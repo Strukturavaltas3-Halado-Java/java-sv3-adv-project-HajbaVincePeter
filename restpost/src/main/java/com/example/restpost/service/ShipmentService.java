@@ -1,11 +1,9 @@
 package com.example.restpost.service;
 
-import com.example.restpost.dtos.address_dtos.AddressDto;
+import com.example.restpost.dtos.Analizer;
 import com.example.restpost.dtos.shipment_commands.UpdateShipmentCommand;
 import com.example.restpost.dtos.shipment_dtos.ShipmentDto;
-import com.example.restpost.exception.NoAddressWithIdException;
-import com.example.restpost.exception.NoPackageWithIdException;
-import com.example.restpost.exception.NoShipmentWithIdExtension;
+import com.example.restpost.exception.*;
 import com.example.restpost.mapper.ShipmentMapper;
 import com.example.restpost.model.address.Address;
 import com.example.restpost.model.packages.Package;
@@ -13,14 +11,15 @@ import com.example.restpost.model.shipment.Shipment;
 import com.example.restpost.repository.AddressRepository;
 import com.example.restpost.repository.PackageRepository;
 import com.example.restpost.repository.ShipmentRepository;
-import jakarta.persistence.Access;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
+
+import static org.aspectj.weaver.MemberImpl.method;
 
 @AllArgsConstructor
 @Service
@@ -33,6 +32,8 @@ public class ShipmentService {
     private AddressRepository addressRepository;
 
     private ShipmentMapper shipmentMapper;
+
+    private Analizer analizer;
 
 
     @Transactional
@@ -77,6 +78,25 @@ public class ShipmentService {
 
 
     @Transactional
+    public ShipmentDto processShipment(long id) throws IllegalAccessException {
+        Shipment shipment = shipmentRepository.findShipment(id)
+                .orElseThrow(() -> new NoShipmentWithIdExtension(id));
+//
+       if (shipment.getTrackingNumber() != null) {
+           throw new ShipmentAlreadyProcessedError(id);
+       }
+
+          shipment.setTrackingNumber(String.valueOf(UUID.randomUUID()));
+
+          ShipmentDto dto = shipmentMapper.toDto(shipment);
+         if(analizer.containsNull(dto)){
+             shipment.setTrackingNumber(null);
+             throw  new ShipmentNotCompleteError(id);
+         };
+         return dto;
+    }
+
+    @Transactional
     public ShipmentDto addPackageToShipment(long shipmentId, long packageId) {
 
         Shipment shipment = shipmentRepository.findShipment(shipmentId).orElseThrow(() ->
@@ -84,6 +104,7 @@ public class ShipmentService {
 
         Package aPackage = packageRepository.findById(packageId).orElseThrow(() ->
                 new NoPackageWithIdException(packageId));
+
 
         shipment.addPackage(aPackage);
 
