@@ -1,0 +1,33 @@
+version: "3.8"
+services:
+  restpostapp:
+    image: restpost
+    ## restart: always
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mariadb://mariadbdb:3306/restpost-compose
+    entrypoint:
+      - "./wait-for-it.sh"
+      - "-t"
+      - "120"
+      - "mariadbdb:3306"
+      - "--"
+      - "java"
+      - "-jar"
+      - "/opt/app/app.jar"
+
+
+    depends_on:
+      - mariadbdb
+  mariadbdb:
+    platform: linux/x86_64
+    image: mariadb
+    restart: always
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_DATABASE: "restpost-compose"
+      MYSQL_USER: "training"
+      MYSQL_PASSWORD: "training"
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"

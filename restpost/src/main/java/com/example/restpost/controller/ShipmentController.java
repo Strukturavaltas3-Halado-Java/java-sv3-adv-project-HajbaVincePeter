@@ -25,21 +25,21 @@ public class ShipmentController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    @Operation(description = "Creating an empty shipment.")
+    @Operation(description = "Creating an empty shipment.", summary = "CREATE SHIPMENT")
     public ShipmentDto createEmptyShipment() {
         return shipmentService.createEmptyShipment();
     }
 
     @PutMapping
     @ResponseStatus(HttpStatus.ACCEPTED)
-    @Operation(description = "Updating a shipment.")
+    @Operation(description = "Updating a shipment.",summary = "UPDATE SHIPMENT")
     public ShipmentDto updateShipment(@Valid @RequestBody UpdateShipmentCommand command) {
         return shipmentService.updateShipment(command);
     }
 
     @PutMapping("/{shipmentId}/package/{packageId}")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    @Operation(description = "Adding a package to a shipment.")
+    @Operation(description = "Adding a package to a shipment.", summary = "ADD A PACKAGE")
     public ShipmentDto addPackageToShipment(@PathVariable long shipmentId, @PathVariable long packageId) {
         return shipmentService.addPackageToShipment(shipmentId, packageId);
     }
@@ -47,31 +47,30 @@ public class ShipmentController {
 
     @PutMapping("/{id}/process")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    @Operation(description = "Processing a shipment")
+    @Operation(description = "Processing a shipment", summary = "PROCESS SHIPMENT")
     public ShipmentDto processShipment(@PathVariable long id) throws IllegalAccessException {
         return shipmentService.processShipment(id);
     }
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    @Operation(description = "Listing all the shipments.")
+    @Operation(description = "Listing all the shipments.", summary = "GET SHIPMENT LIST")
     public List<ShipmentDto> getShipments() {
         return shipmentService.getShipments();
     }
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    @Operation(description = "Finding a processed shipment by the tracking number.")
+    @Operation(description = "Finding a processed shipment by the tracking number.", summary = "TRACK SHIPMENT")
     public ShipmentDto trackShipment(@PathVariable("id") String trackingNumber) {
         return shipmentService.trackShipment(trackingNumber);
     }
 
     @DeleteMapping("/{id}")
-    @Operation(description = "Deleting a shipment",operationId = "shipment id")
+    @Operation(description = "Deleting a shipment",operationId = "shipment id", summary = "DELETE SHIPMENT")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public ShipmentDto deleteShipment(@PathVariable long id) {
         return shipmentService.deleteShipment(id);
     }
-
 
 }
