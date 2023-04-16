@@ -1,24 +1,78 @@
+### Country data
 GET http://localhost:8080/api/addresses/countries
 Accept: application/json
 
+### County data
+GET http://localhost:8080/api/addresses/counties
+Accept: application/json
 
-###
-### find packages
+### List the addresses
+GET http://localhost:8080/api/addresses
+Accept: application/json
+
+### Create address
+POST http://localhost:8080/api/addresses
+Content-Type: application/json
+Accept: application/json
+
+{
+ "country": "HU"
+}
+
+### Find an address
+GET http://localhost:8080/api/addresses/1
+Accept: application/json
+
+### Delete an address
+DELETE http://localhost:8080/api/addresses/2
+Content-Type: application/json
+Accept: application/json
+
+
+### Update an Irish address
+PUT http://localhost:8080/api/addresses/2/ie
+Accept: application/json
+Content-Type: application/json
+
+{
+  "streetAddress": "The Square",
+  "name": "Sir William Courtenay",
+  "city": "Newcastle West",
+  "county": "Limerick"
+}
+
+### Update a postal code address
+PUT http://localhost:8080/api/addresses/1/non-ie
+Content-Type: application/json
+Accept: application/json
+
+{
+  "country": "HU",
+  "streetAddress": "Sas utca 1.",
+  "name": "Guszev Alekszej",
+  "city": "Budapest",
+  "postalCode": "1051"
+}
+
+
+
+### List the packages
 GET http://localhost:8080/api/packages
 Accept: application/json
 
 
-### update package
+### Update a package
 PUT http://localhost:8080/api/packages
 Accept: application/json
 Content-Type: application/json
 
 {
-
-
+  "id": 1,
+  "weight": 100,
+  "shipmentId": 1
 }
 
-### create package
+### Create a package
 POST http://localhost:8080/api/packages
 Content-Type: application/json
 Accept: application/json
@@ -28,55 +82,56 @@ Accept: application/json
 
 }
 
-###
-GET http://localhost:8080/api/packages/shipment/{{shipmentId}}/
+### Get packages of a shipment
+GET http://localhost:8080/api/packages/shipment/1
 Accept: application/json
 
-###
-GET http://localhost:8080/api/packages/{{id}}
+### Find a package
+GET http://localhost:8080/api/packages/1
 Accept: application/json
 
-###
-GET http://localhost:8080/api/addresses
+### Delete a package
+DELETE http://localhost:8080/api/packages/8
 Accept: application/json
 
-###
-POST http://localhost:8080/api/addresses
-Content-Type: application/json
-Accept: application/json
-###
-GET http://localhost:8080/api/addresses/counties
-Accept: application/json
-
-###
-GET http://localhost:8080/api/addresses/countries
-Accept: application/json
-
-###
-GET http://localhost:8080/api/addresses/{{id}}
-Accept: application/json
-
-###
-DELETE http://localhost:8080/api/addresses/{{id}}
-Content-Type: application/json
-Accept: application/json
-###
-PUT http://localhost:8080/api/addresses/{{id}}/ie
-Accept: application/json
-Content-Type: application/json
-###
-PUT http://localhost:8080/api/addresses/{{id}}/non-ie
-Content-Type: application/json
-Accept: application/json
-###
+### List the shipments
 GET http://localhost:8080/api/shipments
 Accept: application/json
 
-###
+
+### Create a shipment
+POST http://localhost:8080/api/shipments
+Content-Type: application/json
+Accept: application/json
+
+
+### Update a shipment
 PUT http://localhost:8080/api/shipments
 Content-Type: application/json
 Accept: application/json
-###
-POST http://localhost:8080/api/shipments
-Content-Type: application/json
+
+{
+  "id": 1,
+  "fromId": 1,
+  "toId": 1,
+  "shippingDate": "2023-04-16",
+  "packagesIdList": [
+    1
+  ]
+}
+
+### Track shipment
+GET http://localhost:8080/api/shipments/3ad3282e-0338-4fe1-b1eb-fc945ea4ee47
+Accept: application/json
+
+### Process shipment
+PUT http://localhost:8080/api/shipments/1/process
+Accept: application/json
+
+### Add a package to a shipment
+PUT http://localhost:8080/api/shipments/1/package/1
+Accept: application/json
+
+### Delete shipment
+DELETE http://localhost:8080/api/shipments/2
 Accept: application/json
