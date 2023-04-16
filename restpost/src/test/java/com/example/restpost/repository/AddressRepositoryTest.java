@@ -58,7 +58,6 @@ public class AddressRepositoryTest {
                 .hasSize(3);
 
 
-
         assertEquals("1126",((AddressWithPostalCode) addresses.get(2)).getPostalCode());
 
         assertTrue(addresses.get(2) instanceof AddressWithPostalCode);
@@ -72,6 +71,8 @@ public class AddressRepositoryTest {
 
 
     }
+
+
 
 
 

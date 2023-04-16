@@ -1,3 +1,8 @@
+GET http://localhost:8080/api/addresses/countries
+Accept: application/json
+
+
+###
 ### find packages
 GET http://localhost:8080/api/packages
 Accept: application/json

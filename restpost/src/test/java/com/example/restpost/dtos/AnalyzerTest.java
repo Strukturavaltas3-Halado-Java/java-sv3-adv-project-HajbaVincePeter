@@ -18,7 +18,7 @@ public class AnalyzerTest {
     Analyzer analyzer = new Analyzer();
 
     @Test
-    void containsNullTest() {
+    void containsNullTest() throws IllegalAccessException {
 
 
         ShipmentDto empty = new ShipmentDto();
@@ -60,17 +60,17 @@ public class AnalyzerTest {
 
         ready.getPackages().add(packageDto);
 
-
-
-
-
         assertAll(
                 () -> assertTrue(analyzer.containsNull(empty)),
                 () -> assertTrue(analyzer.containsNull(withDate)),
                 () -> assertTrue(analyzer.containsNull(withAddresses)),
                 () -> assertTrue(analyzer.containsNull(emptyWithPackagesAddresses)),
-                () -> assertFalse(analyzer.containsNull(ready))
-        );
+                () -> assertFalse(analyzer.containsNull(ready)),
+
+
+                ()-> { ready.getPackages().stream().forEach(packageDto1 ->packageDto1.setWeight(null));
+                    assertTrue(analyzer.containsNull(ready));});
+
     }
 
 

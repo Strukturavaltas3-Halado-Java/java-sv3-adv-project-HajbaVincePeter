@@ -2,12 +2,11 @@ package com.example.restpost.dtos.address_commands;
 
 import com.example.restpost.model.address.Country;
 import com.example.restpost.validator.ValidatePostalAddress;
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
@@ -15,15 +14,16 @@ import lombok.Setter;
 @AllArgsConstructor
 @ValidatePostalAddress
 public class UpdatePostalCommand implements UpdateCommand {
-    @NotNull
+
+    @NotNull @Schema(example = "HU")
     private Country country;
-    @NotNull
+    @NotNull@NotBlank @Schema(example = "Sas utca 1.")
     private String streetAddress;
-    @NotNull
+    @NotNull@NotBlank @Schema(example = "Guszev Alekszej")
     private String name;
-    @NotNull
+    @NotNull@NotBlank @Schema(example = "Budapest")
     private String city;
-    @NotNull
+    @NotNull@NotBlank @Schema(example = "1051")
     private String postalCode;
 
 }

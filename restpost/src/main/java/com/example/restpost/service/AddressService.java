@@ -5,9 +5,9 @@ import com.example.restpost.dtos.address_commands.UpdateIrishCommand;
 import com.example.restpost.dtos.address_commands.UpdateCommand;
 import com.example.restpost.dtos.address_commands.UpdatePostalCommand;
 import com.example.restpost.dtos.address_dtos.AddressDto;
-import com.example.restpost.exception.AddressInShipmentException;
-import com.example.restpost.exception.CountryMismatchException;
-import com.example.restpost.exception.NoAddressWithIdException;
+import com.example.restpost.exception.exceptions.AddressInShipmentException;
+import com.example.restpost.exception.exceptions.CountryMismatchException;
+import com.example.restpost.exception.exceptions.NoAddressWithIdException;
 import com.example.restpost.mapper.AddressMapper;
 import com.example.restpost.model.address.Address;
 import com.example.restpost.model.address.AddressIrish;
@@ -81,7 +81,7 @@ public class AddressService {
         Address address = addressRepository.findById(id).orElseThrow(() -> new NoAddressWithIdException(id));
 
         if (address instanceof AddressWithPostalCode) {
-            if (updateCommand instanceof UpdatePostalCommand) {
+            if (updateCommand instanceof UpdatePostalCommand && ((UpdatePostalCommand) updateCommand).getCountry()!=Country.IE) {
                 updatePostal((UpdatePostalCommand) updateCommand, address);
                 return addressMapper.toDto((AddressWithPostalCode) address);
             } else {

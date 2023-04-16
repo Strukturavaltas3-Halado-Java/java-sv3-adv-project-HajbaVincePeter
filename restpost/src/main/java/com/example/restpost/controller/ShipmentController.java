@@ -4,6 +4,7 @@ import com.example.restpost.dtos.shipment_commands.CreateEmptyCommand;
 import com.example.restpost.dtos.shipment_commands.UpdateShipmentCommand;
 import com.example.restpost.dtos.shipment_dtos.ShipmentDto;
 import com.example.restpost.service.ShipmentService;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
@@ -24,47 +25,53 @@ public class ShipmentController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
+    @Operation(description = "Creating an empty shipment.")
     public ShipmentDto createEmptyShipment() {
         return shipmentService.createEmptyShipment();
     }
 
     @PutMapping
     @ResponseStatus(HttpStatus.ACCEPTED)
+    @Operation(description = "Updating a shipment.")
     public ShipmentDto updateShipment(@Valid @RequestBody UpdateShipmentCommand command) {
         return shipmentService.updateShipment(command);
     }
 
     @PutMapping("/{shipmentId}/package/{packageId}")
-    @Tag(name = "ADD A PACKAGE", description = "Adding a package to a shipment")
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    @Operation(description = "Adding a package to a shipment.")
     public ShipmentDto addPackageToShipment(@PathVariable long shipmentId, @PathVariable long packageId) {
         return shipmentService.addPackageToShipment(shipmentId, packageId);
     }
 
+
+    @PutMapping("/{id}/process")
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    @Operation(description = "Processing a shipment")
+    public ShipmentDto processShipment(@PathVariable long id) throws IllegalAccessException {
+        return shipmentService.processShipment(id);
+    }
+
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
+    @Operation(description = "Listing all the shipments.")
     public List<ShipmentDto> getShipments() {
         return shipmentService.getShipments();
     }
 
-
-
-
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
+    @Operation(description = "Finding a processed shipment by the tracking number.")
     public ShipmentDto trackShipment(@PathVariable("id") String trackingNumber) {
         return shipmentService.trackShipment(trackingNumber);
     }
 
     @DeleteMapping("/{id}")
+    @Operation(description = "Deleting a shipment",operationId = "shipment id")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public ShipmentDto deleteShipment(@PathVariable long id) {
         return shipmentService.deleteShipment(id);
     }
 
-
-    @PutMapping("/{id}/process")
-    public ShipmentDto processShipment(@PathVariable long id) throws IllegalAccessException {
-        return shipmentService.processShipment(id);
-    }
 
 }

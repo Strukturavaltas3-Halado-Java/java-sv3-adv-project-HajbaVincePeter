@@ -20,9 +20,6 @@ public interface AddressMapper {
     AddressWithPostalCodeDto toDto(AddressWithPostalCode addressWithPostalCode);
 
 
-    AddressWithPostalCode fromCommand(UpdatePostalCommand updatePostalCommand);
-
-    AddressIrish fromCommand(UpdateIrishCommand updateIrishCommand);
 
 
 }

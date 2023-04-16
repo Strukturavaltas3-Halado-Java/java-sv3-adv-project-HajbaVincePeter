@@ -17,7 +17,7 @@ import lombok.Setter;
 public class CountryCommand {
 
 
-    @NotNull
+    @NotNull@Schema(example = "HU")
     private Country country;
 
 }

@@ -1,4 +1,4 @@
-package com.example.restpost.exception;
+package com.example.restpost.exception.exceptions;
 
 public class CountryMismatchException extends RuntimeException {
     public CountryMismatchException(Long id) {

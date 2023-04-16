@@ -1,4 +1,4 @@
-package com.example.restpost.exception;
+package com.example.restpost.exception.exceptions;
 
 public class ShipmentAlreadyProcessedError extends RuntimeException {
     public ShipmentAlreadyProcessedError(long id) {

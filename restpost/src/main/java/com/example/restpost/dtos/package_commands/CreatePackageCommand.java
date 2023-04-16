@@ -2,13 +2,18 @@ package com.example.restpost.dtos.package_commands;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import lombok.Data;
 import org.springframework.validation.annotation.Validated;
 
 @Data
 public class CreatePackageCommand {
 
-    @Max(value = 100, message = "A package cannot weight more than 100Kg.")
+    @NotNull(message = "The weight cannot be null.")
+    @Positive(message = "A package has a positive weight.")
+    @Max(value = 100, message = "A package cannot weight more than 100 kg.")
     private Integer weight;
 
 }

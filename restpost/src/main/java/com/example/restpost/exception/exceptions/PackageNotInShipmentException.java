@@ -1,4 +1,4 @@
-package com.example.restpost.exception;
+package com.example.restpost.exception.exceptions;
 
 public class PackageNotInShipmentException extends RuntimeException {
     public PackageNotInShipmentException(Long id, Long shipmentId) {

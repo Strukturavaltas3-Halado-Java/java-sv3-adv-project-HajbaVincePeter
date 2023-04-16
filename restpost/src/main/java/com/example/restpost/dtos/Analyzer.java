@@ -12,9 +12,7 @@ public class Analyzer {
         if (obj == null) {
             return true;
         }
-
         Class<?> clazz = obj.getClass();
-
 
         Field[] fields = clazz.getDeclaredFields();
         for (Field field : fields) {
@@ -31,10 +29,9 @@ public class Analyzer {
                     }
                 }
             } else if (value instanceof Collection<?>) {
-                if(((Collection<?>) value).size() == 0) {
+                if (((Collection<?>) value).size() == 0) {
                     return true;
                 }
-
                 for (Object v : ((Collection<?>) value)) {
                     {
                         try {
@@ -46,22 +43,12 @@ public class Analyzer {
                         }
                     }
                 }
-
-
-
-
-            } else if (!field.getType().isPrimitive() && !field.getType().equals(String.class) &&
-                    value.getClass().getPackage().getName().contains("com.example.restpost.dtos")) {
-
+            } else if (!field.getType().isPrimitive() && !field.getType().equals(String.class) && value.getClass().getPackage().getName().contains("com.example.restpost.dtos")) {
                 if (containsNull(value)) {
                     return true;
                 }
             }
         }
-
         return false;
     }
-
-
-
 }

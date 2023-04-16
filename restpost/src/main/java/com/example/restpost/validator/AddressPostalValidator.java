@@ -1,7 +1,7 @@
 package com.example.restpost.validator;
 
-import com.example.restpost.dtos.address_commands.UpdateCommand;
 import com.example.restpost.dtos.address_commands.UpdatePostalCommand;
+import com.example.restpost.model.address.Country;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
@@ -21,6 +21,9 @@ public class AddressPostalValidator implements ConstraintValidator<ValidatePosta
        if(updateCommand.getPostalCode()==null ) {
            return false;
        }
+
+       if(updateCommand.getCountry() == Country.IE) {return false;}
+
        return  updateCommand.getCountry().getPostalCodeFormat() ==
         updateCommand.getPostalCode().length();
     }

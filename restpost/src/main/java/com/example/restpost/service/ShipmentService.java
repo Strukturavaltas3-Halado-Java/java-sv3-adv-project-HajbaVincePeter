@@ -3,7 +3,7 @@ package com.example.restpost.service;
 import com.example.restpost.dtos.Analyzer;
 import com.example.restpost.dtos.shipment_commands.UpdateShipmentCommand;
 import com.example.restpost.dtos.shipment_dtos.ShipmentDto;
-import com.example.restpost.exception.*;
+import com.example.restpost.exception.exceptions.*;
 import com.example.restpost.mapper.ShipmentMapper;
 import com.example.restpost.model.address.Address;
 import com.example.restpost.model.packages.Package;
@@ -15,6 +15,7 @@ import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -48,7 +49,7 @@ public class ShipmentService {
     public ShipmentDto updateShipment(UpdateShipmentCommand command) {
 
         Shipment shipment = shipmentRepository.findById(command.getId()).orElseThrow(() ->
-                new NoShipmentWithIdExtension(command.getId())
+                new NoShipmentWithIdException(command.getId())
         );
 
         shipment.setShippingDate(command.getShippingDate());
@@ -80,7 +81,7 @@ public class ShipmentService {
     @Transactional
     public ShipmentDto processShipment(long id) throws IllegalAccessException {
         Shipment shipment = shipmentRepository.findShipment(id)
-                .orElseThrow(() -> new NoShipmentWithIdExtension(id));
+                .orElseThrow(() -> new NoShipmentWithIdException(id));
 //
        if (shipment.getTrackingNumber() != null) {
            throw new ShipmentAlreadyProcessedError(id);
@@ -93,6 +94,10 @@ public class ShipmentService {
              shipment.setTrackingNumber(null);
              throw  new ShipmentNotCompleteError(id);
          };
+         if(!shipment.getShippingDate().isAfter(LocalDate.now())) {
+             throw new NotFutureDateException(id);
+         }
+
          return dto;
     }
 
@@ -100,7 +105,7 @@ public class ShipmentService {
     public ShipmentDto addPackageToShipment(long shipmentId, long packageId) {
 
         Shipment shipment = shipmentRepository.findShipment(shipmentId).orElseThrow(() ->
-                new NoShipmentWithIdExtension(shipmentId));
+                new NoShipmentWithIdException(shipmentId));
 
         Package aPackage = packageRepository.findById(packageId).orElseThrow(() ->
                 new NoPackageWithIdException(packageId));
@@ -121,7 +126,7 @@ public class ShipmentService {
     @Transactional
     public ShipmentDto trackShipment(String trackingNumber){
          return  shipmentMapper.toDto(shipmentRepository.findByTrackingNumber(trackingNumber)
-                 .orElseThrow(()-> new NoShipmentWithTrackingNumber(trackingNumber)));
+                 .orElseThrow(()-> new NoShipmentWithTrackingNumberException(trackingNumber)));
 
     }
 
@@ -130,7 +135,7 @@ public class ShipmentService {
     public ShipmentDto deleteShipment(long id) {
 
         Shipment shipment = shipmentRepository.findShipment(id).orElseThrow(() ->
-                new NoShipmentWithIdExtension(id));
+                new NoShipmentWithIdException(id));
 
         ShipmentDto deleted = shipmentMapper.toDto(shipment);
 

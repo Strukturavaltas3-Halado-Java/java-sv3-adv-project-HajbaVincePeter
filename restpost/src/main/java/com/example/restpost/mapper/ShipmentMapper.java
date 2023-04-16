@@ -18,49 +18,35 @@ import java.util.Set;
 @Mapper
 public interface ShipmentMapper {
 
-     ShipmentDto toDto(Shipment shipment);
+    ShipmentDto toDto(Shipment shipment);
 
-default      AddressDto map(Address value){
-     if (value instanceof AddressIrish) {
-           return map((AddressIrish) value);
-     }else {
-           return map((AddressWithPostalCode) value);
+    default AddressDto map(Address value) {
+        if (value instanceof AddressIrish) {
+            return map((AddressIrish) value);
+        } else {
+            return map((AddressWithPostalCode) value);
 
-     }
+        }
 
-};
+    }
 
-     AddressIrishDto map(AddressIrish addressIrish);
+    AddressIrishDto map(AddressIrish addressIrish);
 
-     AddressWithPostalCodeDto map(AddressWithPostalCode addressWithPostalCode);
+    AddressWithPostalCodeDto map(AddressWithPostalCode addressWithPostalCode);
 
-     default PackageDto toDto(Package box) {
+    default PackageDto toDto(Package box) {
 
-          PackageDto packageDto = new PackageDto();
+        PackageDto packageDto = new PackageDto();
 
-          packageDto.setId(box.getId());
-          packageDto.setWeight(box.getWeight());
-          if (box.getShipment() != null) {
-               packageDto.setShipmentId(box.getShipment().getId());
-          }
-          return packageDto;
+        packageDto.setId(box.getId());
+        packageDto.setWeight(box.getWeight());
+        if (box.getShipment() != null) {
+            packageDto.setShipmentId(box.getShipment().getId());
+        }
+        return packageDto;
 
-     }
-     List<ShipmentDto> toDto(List<Shipment> shipments);
-
-//     {
-//
-//        ShipmentDto shipmentDto = new ShipmentDto();
-//
-//       if(shipment.getPackages() != null) {
-//         shipmentDto.
-//
-//       }
-//
-//    };
-
-
-
+    }
+    List<ShipmentDto> toDto(List<Shipment> shipments);
 
 
 }

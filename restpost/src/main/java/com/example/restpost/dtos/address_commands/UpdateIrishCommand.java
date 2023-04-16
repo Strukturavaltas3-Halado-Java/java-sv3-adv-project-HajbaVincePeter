@@ -17,11 +17,11 @@ import lombok.Setter;
 @AllArgsConstructor
 public class UpdateIrishCommand implements UpdateCommand {
 
-    @NotNull @Schema(example = "The Square")
+    @NotNull@NotBlank @Schema(example = "The Square")
     private String streetAddress;
-    @NotNull @Schema(example = "Sir William Courtenay")
+    @NotNull@NotBlank @Schema(example = "Sir William Courtenay")
     private String name;
-    @NotNull @Schema(example = "Newcastle West")
+    @NotNull@NotBlank @Schema(example = "Newcastle West")
     private String city;
     @NotNull @Schema(example = "Limerick")
     private County county;

@@ -1,5 +1,6 @@
 package com.example.restpost.exception;
 
+import com.example.restpost.exception.exceptions.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -53,8 +54,8 @@ public class GlobalExceptionHandler {
         return detail;
     }
 
-    @ExceptionHandler(NoShipmentWithIdExtension.class)
-    public ProblemDetail handleNoShipmentWithIdExtension(NoShipmentWithIdExtension e) {
+    @ExceptionHandler(NoShipmentWithIdException.class)
+    public ProblemDetail handleNoShipmentWithIdExtension(NoShipmentWithIdException e) {
         ProblemDetail detail = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, e.getMessage());
         detail.setType(URI.create("shipments/not-found"));
         return detail;
@@ -82,12 +83,25 @@ public class GlobalExceptionHandler {
     }
 
 
-    @ExceptionHandler(NoShipmentWithTrackingNumber.class)
-    public ProblemDetail handleNoShipmentWithTrackingNumber(NoShipmentWithTrackingNumber e) {
+    @ExceptionHandler(NoShipmentWithTrackingNumberException.class)
+    public ProblemDetail handleNoShipmentWithTrackingNumber(NoShipmentWithTrackingNumberException e) {
         ProblemDetail detail = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, e.getMessage());
         detail.setType(URI.create("shipment/tracking"));
         return detail;
     }
 
+    @ExceptionHandler(NotFutureDateException.class)
+    public ProblemDetail handleNotFutureDateException(NotFutureDateException e){
+        ProblemDetail detail = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_ACCEPTABLE,e.getMessage());
+        detail.setType(URI.create("shipment/not-future"));
+        return detail;
+    }
+
+    @ExceptionHandler(PackageNotInShipmentException.class)
+    public ProblemDetail handlePackageNotInShipmentException(PackageNotInShipmentException e){
+        ProblemDetail detail = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_ACCEPTABLE, e.getMessage());
+        detail.setType(URI.create("package/wrong-data"));
+        return detail;
+    }
 
 }
