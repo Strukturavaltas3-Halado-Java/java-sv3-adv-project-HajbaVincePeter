@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import static org.aspectj.weaver.MemberImpl.method;
+
 
 @AllArgsConstructor
 @Service
@@ -93,7 +93,7 @@ public class ShipmentService {
          if(analyzer.containsNull(dto)){
              shipment.setTrackingNumber(null);
              throw  new ShipmentNotCompleteError(id);
-         };
+         }
          if(!shipment.getShippingDate().isAfter(LocalDate.now())) {
              throw new NotFutureDateException(id);
          }

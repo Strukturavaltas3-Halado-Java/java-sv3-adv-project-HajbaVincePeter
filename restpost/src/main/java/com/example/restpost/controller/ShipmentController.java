@@ -1,16 +1,16 @@
 package com.example.restpost.controller;
 
-import com.example.restpost.dtos.shipment_commands.CreateEmptyCommand;
+
 import com.example.restpost.dtos.shipment_commands.UpdateShipmentCommand;
 import com.example.restpost.dtos.shipment_dtos.ShipmentDto;
 import com.example.restpost.service.ShipmentService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.transaction.Transactional;
+
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.validation.annotation.Validated;
+
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;

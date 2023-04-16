@@ -4,7 +4,7 @@ import com.example.restpost.dtos.address_dtos.AddressDto;
 import com.example.restpost.mapper.AddressMapper;
 import com.example.restpost.model.address.*;
 import org.junit.jupiter.api.Test;
-import org.modelmapper.ModelMapper;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 

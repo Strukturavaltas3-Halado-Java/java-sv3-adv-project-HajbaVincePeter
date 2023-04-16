@@ -5,7 +5,7 @@ import com.example.restpost.dtos.package_dtos.PackageDto;
 import com.example.restpost.dtos.shipment_dtos.ShipmentDto;
 import com.example.restpost.model.address.Country;
 import com.example.restpost.model.address.County;
-import com.example.restpost.model.shipment.Shipment;
+
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
