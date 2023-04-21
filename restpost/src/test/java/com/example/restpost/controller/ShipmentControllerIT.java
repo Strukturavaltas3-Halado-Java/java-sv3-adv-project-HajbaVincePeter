@@ -11,9 +11,9 @@ import com.example.restpost.dtos.shipment_dtos.ShipmentDto;
 import com.example.restpost.model.address.Country;
 import com.example.restpost.model.address.County;
 
-import com.example.restpost.model.shipment.Shipment;
+
 import com.example.restpost.repository.ShipmentRepository;
-import jakarta.transaction.Transactional;
+
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -8,6 +8,7 @@ A jelenlegi munkám során is részeben hasonló szállítmányozási alkalmazá
 
 Alapfunkcióként a címek és csomagok létrehozhatóak, módosíthatóak és törölhetőek - az ezekből összeállított szállítmány pedig - amennyiben minden szükséges elemet tartalmaz - véglegesíthető, illetve később az ekkor megkapott publikus egyedi azonosítója alapján - a nyomonkövetést modellezendő - visszakereshető. 
 Az alkalmazás végpontjai egy-egy szállítmány weboldalon történő létrehozásának lépéseihez alkalmazkodnak.
+
 ---
 
 ## Felépítés
