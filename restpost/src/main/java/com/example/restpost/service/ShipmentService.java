@@ -3,6 +3,7 @@ package com.example.restpost.service;
 import com.example.restpost.dtos.Analyzer;
 import com.example.restpost.dtos.shipment_commands.UpdateShipmentCommand;
 import com.example.restpost.dtos.shipment_dtos.ShipmentDto;
+import com.example.restpost.exception.exceptions.AnotherShipmentException;
 import com.example.restpost.exception.exceptions.*;
 import com.example.restpost.mapper.ShipmentMapper;
 import com.example.restpost.model.address.Address;
@@ -82,7 +83,7 @@ public class ShipmentService {
     public ShipmentDto processShipment(long id) throws IllegalAccessException {
         Shipment shipment = shipmentRepository.findShipment(id)
                 .orElseThrow(() -> new NoShipmentWithIdException(id));
-//
+
        if (shipment.getTrackingNumber() != null) {
            throw new ShipmentAlreadyProcessedError(id);
        }
@@ -110,6 +111,10 @@ public class ShipmentService {
         Package aPackage = packageRepository.findById(packageId).orElseThrow(() ->
                 new NoPackageWithIdException(packageId));
 
+        if(aPackage.getShipment()!= null && aPackage.getShipment().getId() != shipmentId) {
+
+            throw new AnotherShipmentException(packageId);
+        }
 
         shipment.addPackage(aPackage);
 

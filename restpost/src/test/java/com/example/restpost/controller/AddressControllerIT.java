@@ -7,6 +7,8 @@ import com.example.restpost.dtos.address_commands.UpdatePostalCommand;
 import com.example.restpost.dtos.address_dtos.AddressIrishDto;
 import com.example.restpost.dtos.address_dtos.AddressWithPostalCodeDto;
 
+import com.example.restpost.dtos.shipment_commands.UpdateShipmentCommand;
+import com.example.restpost.dtos.shipment_dtos.ShipmentDto;
 import com.example.restpost.model.address.Country;
 import com.example.restpost.model.address.County;
 
@@ -27,6 +29,7 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.web.reactive.function.BodyInserters;
 
 import java.net.URI;
+import java.time.LocalDate;
 import java.util.List;
 
 
@@ -83,7 +86,7 @@ public class AddressControllerIT {
     @Test
     void wrongCountryCodeTest() {
 
-        String body = "{ \"country\":\"DE\" }";
+        String body = "{ \"country\":\"XX\" }";
 
 
         webTestClient.post()
@@ -97,7 +100,7 @@ public class AddressControllerIT {
                         assertEquals(URI.create("addresses/value-not-valid"), problemDetail.getType()))
                 .value(problemDetail ->
                         assertEquals("JSON parse error: Cannot deserialize value of type " +
-                                "`com.example.restpost.model.address.Country` from String \"DE\": " +
+                                "`com.example.restpost.model.address.Country` from String \"XX\": " +
                                 "not one of the values accepted for Enum class: [PL, HU, IE]", problemDetail.getDetail()));
 
         System.out.println(body.getClass().getSimpleName());
@@ -185,7 +188,6 @@ public class AddressControllerIT {
                 .expectBody(AddressWithPostalCodeDto.class)
                 .returnResult().getResponseBody().getId();
 
-
         webTestClient.put()
                 .uri(uriBuilder -> uriBuilder.path("api/addresses/{id}/non-ie").build(id))
                 .bodyValue(new UpdatePostalCommand(
@@ -213,9 +215,24 @@ public class AddressControllerIT {
                         .contains("wrong postal code format for the given country")))
                 .value(problemDetail -> assertTrue(problemDetail.getType().equals(URI.create("wrong-data"))));
 
+    }
+
+    @Test
+    void countryMisMatch() {
+
+        String body = "{ \"country\":\"HU\" }";
+
+        Long id = webTestClient.post()
+                .uri("/api/addresses")
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(BodyInserters.fromObject(body))
+                .exchange()
+                .expectBody(AddressWithPostalCodeDto.class)
+                .returnResult().getResponseBody().getId();
+
 
         webTestClient.put()
-                .uri(uriBuilder -> uriBuilder.path("api/addresses/{id}/non-ie").build(id))
+                .uri(uriBuilder -> uriBuilder.path("api/addresses/{id}/ie").build(id))
                 .bodyValue(new UpdateIrishCommand(
                         "Valamilyen utca 6.", "Teleki Blanka",
                         "Budapest", County.Cork))
@@ -224,8 +241,8 @@ public class AddressControllerIT {
                 .expectBody(ProblemDetail.class)
                 .value(problemDetail -> assertEquals(406, problemDetail.getStatus()))
                 .value(problemDetail -> assertTrue(problemDetail.getDetail()
-                        .contains("wrong postal code format for the given country")))
-                .value(problemDetail -> assertTrue(problemDetail.getType().equals(URI.create("wrong-data"))));
+                        .contains(String.format("The type of the country of the address with the id: %s cannot be updated with this update.",id))))
+                .value(problemDetail -> assertTrue(problemDetail.getType().equals(URI.create("addresses/not-for-this-country"))));
 
     }
 
@@ -296,9 +313,10 @@ public class AddressControllerIT {
                                 "codes [updateIrishCommand.city,city]; arguments []; default message [city]]")));
 
     }
+
     @Nested
     @Sql(scripts = {"/cleartables.sql"})
-     class getTests {
+    class getTests {
 
         Long id;
         Long id1;
@@ -391,68 +409,111 @@ public class AddressControllerIT {
         }
 
 
+    }
 
+
+    @Test
+    void deleteAddressTest() {
+
+
+        String body1 = "{ \"country\":\"IE\" }";
+
+        Long id1 = webTestClient.post()
+                .uri("/api/addresses")
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(BodyInserters.fromObject(body1))
+                .exchange()
+                .expectBody(AddressIrishDto.class)
+                .returnResult().getResponseBody().getId();
+
+
+        webTestClient.put()
+                .uri(uriBuilder -> uriBuilder.path("api/addresses/{id}/ie").build(id1))
+                .bodyValue(new UpdateIrishCommand("Main street 6.", "G.B Show", "Dublin", County.Dublin))
+                .exchange();
+
+
+        webTestClient.delete()
+                .uri(uriBuilder -> uriBuilder.path("api/addresses/{id}").build(id1))
+                .exchange()
+                .expectStatus().isAccepted()
+                .expectBody(AddressIrishDto.class)
+                .value(addressIrishDto -> assertEquals(County.Dublin, addressIrishDto.getCounty()))
+                .value(addressIrishDto -> assertEquals("G.B Show", addressIrishDto.getName()))
+                .value(addressIrishDto -> assertEquals("Main street 6.", addressIrishDto.getStreetAddress()))
+                .value(addressIrishDto -> assertEquals("Dublin", addressIrishDto.getCity()))
+                .value(addressIrishDto -> assertEquals(Country.IE, addressIrishDto.getCountry()));
+    }
+
+
+    @Test
+    void deleteAddressInShipmentTest(){
+
+
+        String body1 = "{ \"country\":\"IE\" }";
+
+        Long addressId = webTestClient.post()
+                .uri("/api/addresses")
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(BodyInserters.fromObject(body1))
+                .exchange()
+                .expectBody(AddressIrishDto.class)
+                .returnResult().getResponseBody().getId();
+
+        Long shipmentId = webTestClient.post()
+                .uri("/api/shipments")
+                .exchange()
+                .expectBody(ShipmentDto.class)
+                .returnResult().getResponseBody().getId();
+
+        UpdateShipmentCommand shipmentCommand = new UpdateShipmentCommand();
+
+        shipmentCommand.setId(shipmentId);
+        shipmentCommand.setFromId(addressId);
+
+        webTestClient.put()
+                .uri("api/shipments")
+                .bodyValue(shipmentCommand)
+                .exchange();
+
+
+
+        webTestClient.delete()
+                .uri(uriBuilder -> uriBuilder.path("api/addresses/{id}").build(addressId))
+                .exchange()
+                .expectBody(ProblemDetail.class)
+                .value(problemDetail -> assertEquals(406,problemDetail.getStatus()))
+                .value(problemDetail ->
+                        assertEquals(URI.create("addresses/in-use"), problemDetail.getType()))
+                .value(problemDetail -> assertTrue(problemDetail.getDetail()
+                        .contains(String.format("There is(are) %s shipment(s) containing the address with id: %s",1,addressId))));
 
     }
 
 
 
-        @Test
-        void deleteAddressTest() {
+    @Test
+    @Sql(scripts = {"/cleartables.sql"})
+    void deleteNotExistingAddressTest() {
 
+        Long id1 = 1L;
 
-            String body1 = "{ \"country\":\"IE\" }";
+        webTestClient.delete()
+                .uri(uriBuilder -> uriBuilder.path("api/addresses/{id}").build(id1))
+                .exchange()
+                .expectStatus().isNotFound()
+                .expectBody(ProblemDetail.class)
+                .value(problemDetail ->
+                        assertEquals(URI.create("addresses/address-not-found"), problemDetail.getType()))
+                .value(problemDetail -> assertTrue(problemDetail.getDetail()
+                        .contains(String.format("The address with the id %s does not exist", id1))));
+    }
 
-            Long id1 = webTestClient.post()
-                    .uri("/api/addresses")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .body(BodyInserters.fromObject(body1))
-                    .exchange()
-                    .expectBody(AddressIrishDto.class)
-                    .returnResult().getResponseBody().getId();
-
-
-            webTestClient.put()
-                    .uri(uriBuilder -> uriBuilder.path("api/addresses/{id}/ie").build(id1))
-                    .bodyValue(new UpdateIrishCommand("Main street 6.", "G.B Show", "Dublin", County.Dublin))
-                    .exchange();
-
-
-            webTestClient.delete()
-                    .uri(uriBuilder -> uriBuilder.path("api/addresses/{id}").build(id1))
-                    .exchange()
-                    .expectStatus().isAccepted()
-                    .expectBody(AddressIrishDto.class)
-                    .value(addressIrishDto -> assertEquals(County.Dublin, addressIrishDto.getCounty()))
-                    .value(addressIrishDto -> assertEquals("G.B Show", addressIrishDto.getName()))
-                    .value(addressIrishDto -> assertEquals("Main street 6.", addressIrishDto.getStreetAddress()))
-                    .value(addressIrishDto -> assertEquals("Dublin", addressIrishDto.getCity()))
-                    .value(addressIrishDto -> assertEquals(Country.IE, addressIrishDto.getCountry()));
-        }
-
-        @Test
-        @Sql(scripts = {"/cleartables.sql"})
-        void deleteNotExistingAddressTest() {
-
-            Long id1 = 1L;
-
-            webTestClient.delete()
-                    .uri(uriBuilder -> uriBuilder.path("api/addresses/{id}").build(id1))
-                    .exchange()
-                    .expectStatus().isNotFound()
-                    .expectBody(ProblemDetail.class)
-                    .value(problemDetail ->
-                            assertEquals(URI.create("addresses/address-not-found"), problemDetail.getType()))
-                    .value(problemDetail -> assertTrue(problemDetail.getDetail()
-                            .contains(String.format("The address with the id %s does not exist", id1))));
-        }
-
-        @Test
+    @Test
     void getCountriesTest() {
 
 
-
-            Object result =  webTestClient.get()
+        Object result = webTestClient.get()
                 .uri(uriBuilder -> uriBuilder.path("api/addresses/countries").build())
                 .accept(MediaType.ALL)
                 .exchange()
@@ -460,8 +521,8 @@ public class AddressControllerIT {
                 .expectBody(Object.class)
                 .returnResult().getResponseBody();
 
-          assertEquals("{countries=[HU, PL, IE], countryNames=[HUNGARY, POLAND, IRELAND], postalCodeFormats=[4, 5, null]}",
-           result.toString());
+        assertEquals("{countries=[HU, PL, IE], countryNames=[HUNGARY, POLAND, IRELAND], postalCodeFormats=[4, 5, null]}",
+                result.toString());
 
 
     }
@@ -470,8 +531,7 @@ public class AddressControllerIT {
     void getCountiesTest() {
 
 
-
-        Object result =  webTestClient.get()
+        Object result = webTestClient.get()
                 .uri(uriBuilder -> uriBuilder.path("api/addresses/counties").build())
                 .accept(MediaType.ALL)
                 .exchange()
@@ -485,8 +545,6 @@ public class AddressControllerIT {
                 result.toString());
 
     }
-
-
 
 
 }

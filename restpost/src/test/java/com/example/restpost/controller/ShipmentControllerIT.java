@@ -11,6 +11,9 @@ import com.example.restpost.dtos.shipment_dtos.ShipmentDto;
 import com.example.restpost.model.address.Country;
 import com.example.restpost.model.address.County;
 
+import com.example.restpost.model.shipment.Shipment;
+import com.example.restpost.repository.ShipmentRepository;
+import jakarta.transaction.Transactional;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +29,7 @@ import java.time.LocalDate;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -35,6 +39,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class ShipmentControllerIT {
 
+    @Autowired
+    ShipmentRepository repository;
 
     @Autowired
     WebTestClient webTestClient;
@@ -277,13 +283,39 @@ public class ShipmentControllerIT {
         }
 
         @Test
+        void addPackageToAnotherShipment() {
+
+            webTestClient.put()
+                    .uri(uriBuilder -> uriBuilder.path("api/shipments/{shipmentId}/package/{packageId}").build(shipmentId, packageId))
+                    .exchange();
+
+
+            Long shipmentId1 = webTestClient.post()
+                    .uri("/api/shipments")
+                    .exchange()
+                    .expectBody(ShipmentDto.class)
+                    .returnResult().getResponseBody().getId();
+
+
+            webTestClient.put()
+                    .uri(uriBuilder -> uriBuilder.path("api/shipments/{shipmentId}/package/{packageId}").build(shipmentId1, packageId))
+                    .exchange()
+                    .expectBody(ProblemDetail.class)
+                    .value(problemDetail -> assertEquals(406, problemDetail.getStatus()))
+                    .value(problemDetail -> assertEquals(URI.create("shipments/wrong-data"), problemDetail.getType()))
+                    .value(problemDetail -> assertTrue(problemDetail.getDetail().contains(String.format("The package with id: %s is already in another shipment.", packageId))));
+
+
+        }
+
+        @Test
         void deleteNotExistingShipment() {
             webTestClient.delete()
-                    .uri(uriBuilder -> uriBuilder.path("api/shipments/{id}").build(shipmentId+1))
+                    .uri(uriBuilder -> uriBuilder.path("api/shipments/{id}").build(shipmentId + 1))
                     .exchange()
                     .expectStatus().isNotFound()
                     .expectBody(ProblemDetail.class)
-                    .value(problemDetail -> assertEquals(URI.create("shipments/not-found"),problemDetail.getType()))
+                    .value(problemDetail -> assertEquals(URI.create("shipments/not-found"), problemDetail.getType()))
                     .value(problemDetail -> assertTrue(problemDetail.getDetail().contains(String.format("There is no shipment with the id: %s.", shipmentId + 1))));
 
         }
@@ -397,6 +429,21 @@ public class ShipmentControllerIT {
                         "shippingDate=%s", shipmentId, tracking, addressId, addressId1, LocalDate.now().plusDays(1)))),
                 () -> assertTrue(result1.toString().contains(String.format("{id=%s, weight=50, shipmentId=%s}", packageId, shipmentId))),
                 () -> assertTrue(result1.toString().contains(String.format("{id=%s, weight=60, shipmentId=%s}", packageId1, shipmentId))));
+
+
+    }
+
+    @Test
+    void NotValidTrackingNumberTest() {
+        String wrongTracking = String.valueOf(UUID.randomUUID());
+
+        webTestClient.get()
+                .uri(uriBuilder -> uriBuilder.path("api/shipments/{id}").build(wrongTracking))
+                .exchange()
+                .expectBody(ProblemDetail.class)
+                .value(problemDetail -> assertEquals(404, problemDetail.getStatus()))
+                .value(problemDetail -> assertEquals(URI.create("shipments/tracking"), problemDetail.getType()))
+                .value(problemDetail -> assertTrue(problemDetail.getDetail().contains(String.format("The shipment %s cannot be found", wrongTracking))));
 
 
     }
@@ -546,24 +593,25 @@ public class ShipmentControllerIT {
         shipmentCommand.setId(shipmentId);
         shipmentCommand.setFromId(addressId);
         shipmentCommand.setToId(addressId1);
-        shipmentCommand.setShippingDate(LocalDate.now());
+        shipmentCommand.setShippingDate(LocalDate.now().plusDays(1));
         shipmentCommand.getPackagesIdList().add(packageId);
         shipmentCommand.getPackagesIdList().add(packageId1);
+
 
         webTestClient.put()
                 .uri("api/shipments")
                 .bodyValue(shipmentCommand)
                 .exchange();
 
+        repository.changeDateForTesting(shipmentId, LocalDate.now().minusDays(9));
 
         webTestClient.put()
                 .uri(uriBuilder -> uriBuilder.path("api/shipments/{id}/process").build(shipmentId))
                 .exchange()
                 .expectBody(ProblemDetail.class)
                 .value(problemDetail -> assertEquals(406, problemDetail.getStatus()))
-                .value(problemDetail -> assertEquals(URI.create("shipments/not-complete"), problemDetail.getType()))
-                .value(problemDetail -> assertTrue(problemDetail.getDetail().contains(
-                        String.format("Please complete the shipment details first for the shipment with id: %s!", shipmentId))));
+                .value(problemDetail -> assertEquals(URI.create("shipments/not-future"), problemDetail.getType()))
+                .value(problemDetail -> assertTrue(problemDetail.getDetail().contains("The planned shipping date has to be in the future!")));
 
     }
 
@@ -648,6 +696,16 @@ public class ShipmentControllerIT {
                 .expectBody(ShipmentDto.class)
                 .returnResult().getResponseBody().getTrackingNumber();
 
+        webTestClient.put()
+                .uri(uriBuilder -> uriBuilder.path("api/shipments/{id}/process").build(shipmentId))
+                .exchange()
+                .expectBody(ProblemDetail.class)
+                .value(problemDetail -> assertEquals(406, problemDetail.getStatus()))
+                .value(problemDetail -> assertEquals(URI.create("shipments/processed"), problemDetail.getType()))
+                .value(problemDetail -> assertTrue(problemDetail.getDetail().contains(
+                        String.format("The shipment with id: %s is already processed.", shipmentId)
+                )));
+
         webTestClient.delete()
                 .uri(uriBuilder -> uriBuilder.path("api/shipments/{id}").build(shipmentId))
                 .exchange()
@@ -671,16 +729,5 @@ public class ShipmentControllerIT {
 
 
 }
-
-
-
-
-
-
-
-
-
-
-
 
 

@@ -10,4 +10,7 @@
         <sqlFile path="create-restpost-tables.sql"
                  relativeToChangelogFile="true" />
     </changeSet>
+
+
+
 </databaseChangeLog>

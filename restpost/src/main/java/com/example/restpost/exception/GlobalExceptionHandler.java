@@ -86,21 +86,28 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(NoShipmentWithTrackingNumberException.class)
     public ProblemDetail handleNoShipmentWithTrackingNumber(NoShipmentWithTrackingNumberException e) {
         ProblemDetail detail = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, e.getMessage());
-        detail.setType(URI.create("shipment/tracking"));
+        detail.setType(URI.create("shipments/tracking"));
         return detail;
     }
 
     @ExceptionHandler(NotFutureDateException.class)
     public ProblemDetail handleNotFutureDateException(NotFutureDateException e){
         ProblemDetail detail = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_ACCEPTABLE,e.getMessage());
-        detail.setType(URI.create("shipment/not-future"));
+        detail.setType(URI.create("shipments/not-future"));
         return detail;
     }
 
     @ExceptionHandler(PackageNotInShipmentException.class)
     public ProblemDetail handlePackageNotInShipmentException(PackageNotInShipmentException e){
         ProblemDetail detail = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_ACCEPTABLE, e.getMessage());
-        detail.setType(URI.create("package/wrong-data"));
+        detail.setType(URI.create("packages/wrong-data"));
+        return detail;
+    }
+
+    @ExceptionHandler(AnotherShipmentException.class)
+    public  ProblemDetail handleAnotherShipmentException(AnotherShipmentException e){
+        ProblemDetail detail = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_ACCEPTABLE, e.getMessage());
+        detail.setType((URI.create("shipments/wrong-data")));
         return detail;
     }
 

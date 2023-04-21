@@ -5,7 +5,7 @@ import com.example.restpost.model.packages.Package;
 import com.example.restpost.model.shipment.Shipment;
 import org.mapstruct.Mapper;
 
-@Mapper
+@Mapper(componentModel = "spring")
 public interface PackageMapper {
 
    default PackageDto toDto(Package box){

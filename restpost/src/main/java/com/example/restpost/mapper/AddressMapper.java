@@ -9,7 +9,7 @@ import com.example.restpost.model.address.AddressWithPostalCode;
 import com.example.restpost.model.address.AddressIrish;
 import org.mapstruct.Mapper;
 
-@Mapper
+@Mapper(componentModel = "spring")
 public interface AddressMapper {
 
     AddressDto toDto(Address address);

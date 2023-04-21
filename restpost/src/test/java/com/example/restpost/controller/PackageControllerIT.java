@@ -8,6 +8,7 @@ import com.example.restpost.dtos.shipment_dtos.ShipmentDto;
 
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,8 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.HashSet;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -333,7 +336,7 @@ public class PackageControllerIT {
         command2.setId(shipmentId);
 
         webTestClient.put()
-                .uri(uriBuilder -> uriBuilder.path("api/shipments//{shipmentId}/package/{id}").build(shipmentId, id))
+                .uri(uriBuilder -> uriBuilder.path("api/shipments/{shipmentId}/package/{id}").build(shipmentId, id))
                 .bodyValue(command2)
                 .exchange();
 
@@ -342,6 +345,21 @@ public class PackageControllerIT {
         command1.setWeight(100);
         command1.setShipmentId(shipmentId+1);
 
+    assertAll(
+
+ () -> webTestClient.put()
+                .uri(uriBuilder -> uriBuilder.path("api/packages").build())
+                .accept(MediaType.APPLICATION_JSON)
+                .bodyValue(command1)
+                .exchange()
+                .expectStatus().is4xxClientError()
+                .expectBody(ProblemDetail.class)
+                .value(problemDetail -> assertEquals(406, problemDetail.getStatus()))
+                .value(problemDetail -> assertEquals(URI.create("packages/wrong-data"), problemDetail.getType()))
+                .value(problemDetail -> assertTrue(problemDetail.getDetail()
+                        .contains(String.format("Wrong shipment id: %s for the package with id: %s.",shipmentId+1,id)))),
+
+    ()-> {command1.setShipmentId(null);
         webTestClient.put()
                 .uri(uriBuilder -> uriBuilder.path("api/packages").build())
                 .accept(MediaType.APPLICATION_JSON)
@@ -350,9 +368,43 @@ public class PackageControllerIT {
                 .expectStatus().is4xxClientError()
                 .expectBody(ProblemDetail.class)
                 .value(problemDetail -> assertEquals(406, problemDetail.getStatus()))
-                .value(problemDetail -> assertEquals(URI.create("package/wrong-data"), problemDetail.getType()))
+                .value(problemDetail -> assertEquals(URI.create("packages/wrong-data"), problemDetail.getType()))
                 .value(problemDetail -> assertTrue(problemDetail.getDetail()
-                        .contains(String.format("The package with id: %s is not in the shipment with id: %s.",id,shipmentId+1))));
+                        .contains(String.format("Wrong shipment id: %s for the package with id: %s.",null,id))));},
+
+
+
+
+            ()-> { Long id1 = webTestClient.post()
+                .uri(uriBuilder -> uriBuilder.path("api/packages").build())
+                .accept(MediaType.APPLICATION_JSON)
+                .bodyValue(command)
+                .exchange()
+                .expectBody(PackageDto.class)
+                .returnResult().getResponseBody().getId();
+
+
+
+        UpdatePackageCommand command3 = new UpdatePackageCommand();
+        command3.setId(id1);
+        command3.setWeight(30);
+        command3.setShipmentId(shipmentId);
+
+
+        webTestClient.put()
+                .uri(uriBuilder -> uriBuilder.path("api/packages").build())
+                .accept(MediaType.APPLICATION_JSON)
+                .bodyValue(command3)
+                .exchange()
+                .expectStatus().is4xxClientError()
+                .expectBody(ProblemDetail.class)
+                .value(problemDetail -> assertEquals(406, problemDetail.getStatus()))
+                .value(problemDetail -> assertEquals(URI.create("packages/wrong-data"), problemDetail.getType()))
+                .value(problemDetail -> assertTrue(problemDetail.getDetail()
+                        .contains(String.format("Wrong shipment id: %s for the package with id: %s.",shipmentId,id1))));});
+
+
+
     }
     @Nested
     @Sql(scripts = {"/cleartables.sql"})

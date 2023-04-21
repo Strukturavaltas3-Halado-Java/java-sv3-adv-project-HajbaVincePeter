@@ -6,7 +6,7 @@ services:
     ports:
       - "8080:8080"
     environment:
-      SPRING_DATASOURCE_URL: jdbc:mariadb://mariadbdb:3306/restpost-compose
+      SPRING_DATASOURCE_URL: jdbc:mariadb://mariadbdb:3306/restpostdb
     entrypoint:
       - "./wait-for-it.sh"
       - "-t"
@@ -27,7 +27,7 @@ services:
     ports:
       - "3306:3306"
     environment:
-      MYSQL_DATABASE: "restpost-compose"
+      MYSQL_DATABASE: "restpostdb"
       MYSQL_USER: "training"
       MYSQL_PASSWORD: "training"
       MYSQL_ALLOW_EMPTY_PASSWORD: "yes"

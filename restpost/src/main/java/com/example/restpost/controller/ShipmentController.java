@@ -59,10 +59,10 @@ public class ShipmentController {
         return shipmentService.getShipments();
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/{trackingnumber}")
     @ResponseStatus(HttpStatus.OK)
     @Operation(description = "Finding a processed shipment by the tracking number.", summary = "TRACK SHIPMENT")
-    public ShipmentDto trackShipment(@PathVariable("id") String trackingNumber) {
+    public ShipmentDto trackShipment(@PathVariable("trackingnumber") String trackingNumber) {
         return shipmentService.trackShipment(trackingNumber);
     }
 
