@@ -88,12 +88,12 @@ ___
 
 A `Shipment` entitás a következő attribútumokkal rendelkezik:
 
-`id` : Long (generált),
-`trackingNumber`: String - a véglegesített szállítmány UUID-ja
-`from`: Address - a feladási cím
-`to`: Address - a kézbesítési cím
-`shippingDate` : LocalData - a feladás dátuma (megadáskor, véglegesítéskor csak jövőbeli lehet)
-`packages` : Set<Package>  - a szállítmányt alkotó csomagok 
+* `id` : Long (generált),
+* `trackingNumber`: String - a véglegesített szállítmány UUID-ja
+* `from`: Address - a feladási cím
+* `to`: Address - a kézbesítési cím
+* `shippingDate` : LocalData - a feladás dátuma (megadáskor, véglegesítéskor csak jövőbeli lehet)
+* `packages` : Set<Package>  - a szállítmányt alkotó csomagok 
 
 A `Shipment` és az `Address` entitás között két darab egyirányú n-1 kapcsolat van definiálva.
 A `Shipment` és a  `Package` entitás között kétirányú 1-n jellegű a kapcsolat.
@@ -122,12 +122,12 @@ A szállítmány törlése törli a hozzá tartozó csomagokat de nem törli a c
 ## Technológiai részletek
 
 
-Háromrétegű REST-api alkalmazás - megfelelő repository, service és kontroller osztályokkal.
-Az adatbázis MariaDb, a migrációt a Liquibase végzi.
-Az entitások és dto-k között a Mapstruct fordít. 
-A nullértékek keresését reflectiont használó rekurzív algoritmussal oldottam meg.
-A gyökérkönyvtárban található Docker- és a docker-compose fájlok révén Docker-konténerekben is futtatható.
-Tesztkörnyezetet és dokumentációt a Swagger UI biztosít az alkalmazás számára.
+* Háromrétegű REST-api alkalmazás - megfelelő repository, service és kontroller osztályokkal.
+* Az adatbázis MariaDb, a migrációt a Liquibase végzi.
+* Az entitások és dto-k között a Mapstruct fordít. 
+* A nullértékek keresését reflectiont használó rekurzív algoritmussal oldottam meg.
+* A gyökérkönyvtárban található Docker- és a docker-compose fájlok révén Docker-konténerekben is futtatható.
+* Tesztkörnyezetet és dokumentációt a Swagger UI biztosít az alkalmazás számára.
 
 ---
 
