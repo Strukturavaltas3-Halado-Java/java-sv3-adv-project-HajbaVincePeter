@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-
+@CrossOrigin
 @AllArgsConstructor
 @RestController
 @RequestMapping("/api/addresses")
@@ -91,43 +91,5 @@ public class AddressController {
     }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    //
-//    @PutMapping("/{id}")
-//    public AddressDto updateAddress(@PathVariable("id")Long id, @RequestBody UpdateCommand updateCommand) {
-//
-//        return addressService.updateAddress(id,updateCommand);
-//
-//    }
-//    @PutMapping(value = "/{id}",params )
-//    public AddressDto updateAddress(@PathVariable("id")Long id, @RequestBody @RequestParam(required = false) IrishUpdateCommand updateCommand1) {
-//
-//        return addressService.updateAddress(id,updateCommand1);
-//
-//    }
-//
-//    @PutMapping(value = "/{id}", params = "non-ie")
-//    public AddressDto updateAddress(@PathVariable("id")Long id, @RequestBody @RequestParam(required = false) UpdatePostalCommand updateCommand2) {
-//
-//        return addressService.updateAddress(id,updateCommand2);
-//
-//    }
 
 }
