@@ -8,7 +8,9 @@ import java.util.List;
 
 @Getter
 public enum Country {
-  HU("HUNGARY", 4),PL("POLAND",5),IE("IRELAND");
+  HU("HUNGARY", 4),PL("POLAND",5),IE("IRELAND"),
+    FI("FINLAND",5), FR("FRANCE",5), AT("AUSTRIA",4) ,
+    BE("BELGIUM",4), BG("BULGARIA",4);
 
   final String name;
 
