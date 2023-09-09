@@ -101,7 +101,7 @@ public class AddressControllerIT {
                 .value(problemDetail ->
                         assertEquals("JSON parse error: Cannot deserialize value of type " +
                                 "`com.example.restpost.model.address.Country` from String \"XX\": " +
-                                "not one of the values accepted for Enum class: [PL, HU, IE]", problemDetail.getDetail()));
+                                "not one of the values accepted for Enum class: [FI, BG, PL, HU, AT, IE, BE, FR]", problemDetail.getDetail()));
 
         System.out.println(body.getClass().getSimpleName());
     }
@@ -521,7 +521,7 @@ public class AddressControllerIT {
                 .expectBody(Object.class)
                 .returnResult().getResponseBody();
 
-        assertEquals("{countries=[HU, PL, IE], countryNames=[HUNGARY, POLAND, IRELAND], postalCodeFormats=[4, 5, null]}",
+        assertEquals("{countries=[HU, PL, IE, FI, FR, AT, BE, BG], countryNames=[HUNGARY, POLAND, IRELAND, FINLAND, FRANCE, AUSTRIA, BELGIUM, BULGARIA], postalCodeFormats=[4, 5, null, 5, 5, 4, 4, 4]}",
                 result.toString());
 
 
